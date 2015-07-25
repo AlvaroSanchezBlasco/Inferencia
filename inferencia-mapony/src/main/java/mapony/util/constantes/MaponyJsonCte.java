@@ -2,7 +2,10 @@ package mapony.util.constantes;
 
 /**
  * @author Alvaro Sanchez Blasco
- *         Objetos del JSon
+ *         <p>
+ *         Parametros del JSon
+ *         <p>
+ *         JSon's parameters
  */
 public class MaponyJsonCte {
 

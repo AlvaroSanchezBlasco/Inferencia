@@ -21,9 +21,10 @@ import mapony.util.constantes.MaponyJsonCte;
 
 /**
  * @author Alvaro Sanchez Blasco
- *
- *	<p>Cliente para la conexion a Elastic Search
- *
+ *         <p>
+ *         Cliente para la conexion a Elastic Search
+ *         <p>
+ *         Elastic Search Client
  */
 public class ElasticSearchClient {
 
@@ -66,12 +67,12 @@ public class ElasticSearchClient {
 	 * @return true si ya existe.
 	 */
 	private boolean existeIndiceEnElCluster() {
-		ActionFuture<IndicesExistsResponse> existe = getClient().admin().indices().exists(new IndicesExistsRequest(getIndex()));
+		ActionFuture<IndicesExistsResponse> existe = getClient().admin().indices()
+				.exists(new IndicesExistsRequest(getIndex()));
 		IndicesExistsResponse actionGet = existe.actionGet();
 		return actionGet.isExists();
 	}
 
-	
 	/**
 	 * Crea el indice que llega como parametro en el cluster de ES.
 	 * 
@@ -82,7 +83,9 @@ public class ElasticSearchClient {
 		XContentBuilder typemapping = buildJsonMappings();
 		XContentBuilder settings = buildJsonSettings();
 
-		getClient().admin().indices().create(new CreateIndexRequest(getIndex()).settings(settings).mapping(getType(), typemapping)).actionGet();
+		getClient().admin().indices()
+				.create(new CreateIndexRequest(getIndex()).settings(settings).mapping(getType(), typemapping))
+				.actionGet();
 	}
 
 	/**
@@ -93,7 +96,8 @@ public class ElasticSearchClient {
 	 */
 	private void borrarIndice() {
 		try {
-			DeleteIndexResponse delete = getClient().admin().indices().delete(new DeleteIndexRequest(getIndex())).actionGet();
+			DeleteIndexResponse delete = getClient().admin().indices().delete(new DeleteIndexRequest(getIndex()))
+					.actionGet();
 			if (!delete.isAcknowledged()) {
 			} else {
 			}
@@ -108,146 +112,74 @@ public class ElasticSearchClient {
 		XContentBuilder builder = null;
 		try {
 			builder = XContentFactory.jsonBuilder();
-			builder.startObject()
-						.startObject("index")
-							.startObject("analysis")
-								.startObject("analyzer")
-									.startObject("mapony_analyzer")
-										.field("type", "custom")
-										.field("tokenizer", "mapony_tokenizer_standard")
-										.field("char_filter","html_strip")
-										.field("filter", new String[] {"lowercase","unique","max_length","mapony_stop", "mapony_delimiter"})
-									.endObject()
-								.endObject()
-								.startObject("tokenizer")
-									.startObject("mapony_tokenizer_standard")
-										.field("type", "standard")
-										.field("max_token_length","500")
-									.endObject()
-								.endObject()
-								.startObject("filter")
-									.startObject("mapony_stop")
-										.field("type", "stop")
-										.field("generate_word_parts",false)
-										.field("generate_number_parts",false)
-										.field("split_on_numerics",false)
-									.endObject()
-								.endObject()
-								.startObject("filter")
-									.startObject("mapony_delimiter")
-										.field("type", "word_delimiter")
-										.field("stopwords",
-												new String[] {
-													"_english_,ante,bajo,cabe,con,contra,de,desde,durante,en,entre,"
-													+ "hacia,hasta,mediante,para,por,según,segun,sin,so,sobre,tras,"
-													+ "versus,vía,el,la,lo,los,las,les" })
-									.endObject()
-								.endObject()
-								.startObject("filter")
-									.startObject("max_length")
-										.field("type", "length")
-										.field("max",10)
-										.field("min",4)
-									.endObject()
-								.endObject()
-							.endObject()
-						.endObject()
-					.endObject();
+			builder.startObject().startObject("index").startObject("analysis").startObject("analyzer")
+					.startObject("mapony_analyzer").field("type", "custom")
+					.field("tokenizer", "mapony_tokenizer_standard").field("char_filter", "html_strip")
+					.field("filter",
+							new String[] { "lowercase", "unique", "max_length", "mapony_stop", "mapony_delimiter" })
+					.endObject().endObject().startObject("tokenizer").startObject("mapony_tokenizer_standard")
+					.field("type", "standard").field("max_token_length", "500").endObject().endObject()
+					.startObject("filter").startObject("mapony_stop").field("type", "stop")
+					.field("generate_word_parts", false).field("generate_number_parts", false)
+					.field("split_on_numerics", false).endObject().endObject().startObject("filter")
+					.startObject("mapony_delimiter").field("type", "word_delimiter")
+					.field("stopwords",
+							new String[] { "_english_,ante,bajo,cabe,con,contra,de,desde,durante,en,entre,"
+									+ "hacia,hasta,mediante,para,por,según,segun,sin,so,sobre,tras,"
+									+ "versus,vía,el,la,lo,los,las,les" })
+					.endObject().endObject().startObject("filter").startObject("max_length").field("type", "length")
+					.field("max", 10).field("min", 4).endObject().endObject().endObject().endObject().endObject();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return builder;
 	}
-	
+
 	/**
 	 * Mapeo de datos en el Json
 	 * 
 	 * @return estructura del json que vamos a generar en nuestro cluster
 	 */
-	public static  XContentBuilder buildJsonMappings() {
+	public static XContentBuilder buildJsonMappings() {
 		XContentBuilder builder = null;
 		try {
 
 			builder = XContentFactory.jsonBuilder();
-			builder.startObject()
-						.startObject("_id")
-							.field("path", "id")
-						.endObject()
-						.startObject("_all")
-							.field("enabled", true)
-							.field("analyzer", "mapony_analyzer")
-						.endObject()
-						.startObject("properties")
-							.startObject(MaponyJsonCte.idObject)
-								.field("type", "string")
-								.field("store", true)
-								.field("index", "not_analyzed")
-								.field("include_in_all",false)
-							.endObject()
-							.startObject(MaponyJsonCte.tituloObject)
-								.field("type", "string")
-								.field("store", true)
-								.field("index", "analyzed")
-							.endObject()
-							.startObject(MaponyJsonCte.descripcionObject)
-								.field("type", "string")
-								.field("store", true)
-								.field("index", "analyzed")
-//								.field("ignore_above", 200)
-							.endObject()
-							.startObject(MaponyJsonCte.userTagsObject)
-								.field("type", "string")
-								.field("store", true)
-								.field("index", "analyzed")
-//								.field("ignore_above", 200)
-							.endObject()
-							.startObject(MaponyJsonCte.machineTagsObject)
-								.field("type", "string")
-								.field("store", true)
-								.field("index", "analyzed")
-//								.field("ignore_above", 200)
-							.endObject()
-							.startObject(MaponyJsonCte.locationObject)
-								.field("type", "geo_point")
-								.field("geohash", true)
-								.field("geohash_prefix", true)
-								.field("include_in_all", false)
-								.field("geohash_precision", 10)
-								.field("lat_lon", "true")
-							.endObject()
-							.startObject(MaponyJsonCte.fotoObject)
-								.field("type", "string")
-								.field("store", true)
-								.field("index", "not_analyzed")
-								.field("include_in_all", false)
-							.endObject()
-							.startObject(MaponyJsonCte.captureDeviceObject)
-								.field("type", "string")
-								.field("store", true)
-								.field("index", "analyzed")
-//								.field("ignore_above", 200)
-							.endObject()
-							.startObject(MaponyJsonCte.fechaCapturaObject)
-								.field("type", "date")
-								.field("format", "yyyy-MM-dd")
-								.field("store", true)
-								.field("index", "analyzed")
-//								.field("ignore_above", 200)
-							.endObject()
-							.startObject(MaponyJsonCte.ciudadObject)
-								.field("type", "string")
-								.field("store", true)
-								.field("index", "analyzed")
-//								.field("ignore_above", 200)
-							.endObject()
-						.endObject()
-					.endObject();
+			builder.startObject().startObject("_id").field("path", "id").endObject().startObject("_all")
+					.field("enabled", true).field("analyzer", "mapony_analyzer").endObject().startObject("properties")
+					.startObject(MaponyJsonCte.idObject).field("type", "string").field("store", true)
+					.field("index", "not_analyzed").field("include_in_all", false).endObject()
+					.startObject(MaponyJsonCte.tituloObject).field("type", "string").field("store", true)
+					.field("index", "analyzed").endObject().startObject(MaponyJsonCte.descripcionObject)
+					.field("type", "string").field("store", true).field("index", "analyzed")
+					// .field("ignore_above", 200)
+					.endObject().startObject(MaponyJsonCte.userTagsObject).field("type", "string").field("store", true)
+					.field("index", "analyzed")
+					// .field("ignore_above", 200)
+					.endObject().startObject(MaponyJsonCte.machineTagsObject).field("type", "string")
+					.field("store", true).field("index", "analyzed")
+					// .field("ignore_above", 200)
+					.endObject().startObject(MaponyJsonCte.locationObject).field("type", "geo_point")
+					.field("geohash", true).field("geohash_prefix", true).field("include_in_all", false)
+					.field("geohash_precision", 10).field("lat_lon", "true").endObject()
+					.startObject(MaponyJsonCte.fotoObject).field("type", "string").field("store", true)
+					.field("index", "not_analyzed").field("include_in_all", false).endObject()
+					.startObject(MaponyJsonCte.captureDeviceObject).field("type", "string").field("store", true)
+					.field("index", "analyzed")
+					// .field("ignore_above", 200)
+					.endObject().startObject(MaponyJsonCte.fechaCapturaObject).field("type", "date")
+					.field("format", "yyyy-MM-dd").field("store", true).field("index", "analyzed")
+					// .field("ignore_above", 200)
+					.endObject().startObject(MaponyJsonCte.ciudadObject).field("type", "string").field("store", true)
+					.field("index", "analyzed")
+					// .field("ignore_above", 200)
+					.endObject().endObject().endObject();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return builder;
 	}
-	
+
 	/**
 	 * @return the index
 	 */
@@ -256,7 +188,8 @@ public class ElasticSearchClient {
 	}
 
 	/**
-	 * @param index the index to set
+	 * @param index
+	 *            the index to set
 	 */
 	private final void setIndex(String index) {
 		this.index = index;
@@ -270,7 +203,8 @@ public class ElasticSearchClient {
 	}
 
 	/**
-	 * @param type the type to set
+	 * @param type
+	 *            the type to set
 	 */
 	private final void setType(String type) {
 		this.type = type;
@@ -284,7 +218,8 @@ public class ElasticSearchClient {
 	}
 
 	/**
-	 * @param client the client to set
+	 * @param client
+	 *            the client to set
 	 */
 	private final void setClient(Client client) {
 		this.client = client;
@@ -298,7 +233,8 @@ public class ElasticSearchClient {
 	}
 
 	/**
-	 * @param node the node to set
+	 * @param node
+	 *            the node to set
 	 */
 	private final void setNode(Node node) {
 		this.node = node;
@@ -310,5 +246,5 @@ public class ElasticSearchClient {
 	private final Logger getLogger() {
 		return logger;
 	}
-	
+
 }

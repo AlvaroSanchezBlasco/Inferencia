@@ -13,6 +13,10 @@ import mapony.util.writables.RawDataWritable;
  *         Clase de combiner comun a todos los jobs que la requieran.
  *         <p>
  *         Combina los datos antes de mandarlos a los reducer.
+ *         <p>
+ *         Common combiner class.
+ *         <p>
+ *         Combines the records before send them to the Reducer.
  */
 public class MaponyCombiner extends Reducer<Text, RawDataWritable, Text, RawDataWritable> {
 

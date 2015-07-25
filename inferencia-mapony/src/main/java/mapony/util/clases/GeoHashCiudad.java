@@ -34,6 +34,11 @@ public class GeoHashCiudad {
 		return datos;
 	}
 
+	/**
+	 * @param cadena
+	 * @param precisionGeoHash
+	 * @throws Exception
+	 */
 	public static void cargaHashDatosCiudades(String cadena, final int precisionGeoHash) throws Exception {
 		GeoHashBean bean = new GeoHashBean(cadena.split("\t"), precisionGeoHash);
 		String geoHashString = bean.getGeoHash();

@@ -2,7 +2,7 @@ package mapony.util.constantes;
 
 /**
  * @author Alvaro Sanchez Blasco
- * <p>Clase de constantes 
+ * <p>Clase de constantes<p>Constants
  */
 public final class MaponyCte {
 

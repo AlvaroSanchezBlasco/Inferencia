@@ -1,8 +1,11 @@
 package mapony.util.constantes;
 
 /**
- * @author Alvaro Sanchez Blasco 
- * <p>Clase de constantes con las ciudades representativas que queremos procesar.
+ * @author Alvaro Sanchez Blasco
+ *         <p>
+ *         Clase de constantes con las ciudades representativas que queremos procesar (Madrid, Londres, Roma, Berlin).
+ *         <p>
+ *         Contants related to some representative city, like Madrid, London, Berlin or Rome.
  */
 public class MaponyCiudadesCte {
 
@@ -32,7 +35,7 @@ public class MaponyCiudadesCte {
 	 * GeoNameId : 2950159
 	 */
 	public static final String posicionBerlin = "52.52437,13.41053";
-	
+
 	/**
 	 * Roma
 	 * <p>
@@ -56,9 +59,7 @@ public class MaponyCiudadesCte {
 	public static final String sBerlin = "Berlin";
 	/**
 	 * Roma
-	 * */
+	 */
 	public static final String sRoma = "Roma";
-	
 
-	
 }

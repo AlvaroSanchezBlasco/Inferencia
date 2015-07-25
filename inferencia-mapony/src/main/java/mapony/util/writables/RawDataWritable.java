@@ -12,20 +12,7 @@ import org.apache.hadoop.io.WritableComparable;
  *         <p>
  *         CustomWritable para procesar los datos del dataset de Flickr.
  *         <p>
- * @param identifier
- * @param dateTaken
- * @param captureDevice
- * @param title
- * @param description
- * @param userTags
- * @param machineTags
- * @param longitude
- * @param latitude
- * @param downloadUrl
- * @param geoHash
- * @param continente
- * @param pais
- * @param ciudad
+ *         CustomWritable to process the data of the Flick's dataset.
  */
 public class RawDataWritable implements WritableComparable<RawDataWritable> {
 
@@ -76,20 +63,28 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 	private Text geoHash;
 
 	/**
-	 * Pais relacionado con el geohash y el registro
+	 * Pais. relacionado con el geohash y el registro.
+	 * <p>
+	 * Country. Related with the geohash and the record processed.
 	 */
 	private Text pais;
 	/**
-	 * Ciudad relacionado con el geohash y el registro
+	 * Ciudad. relacionado con el geohash y el registro.
+	 * <p>
+	 * City. Related with the geohash and the record processed.
 	 */
 	private Text ciudad;
 	/**
-	 * Continente relacionado con el geohash y el registro
+	 * Continente. Relacionado con el geohash y el registro.
+	 * <p>
+	 * Continent. Related with the geohash and the record processed.
 	 */
 	private Text continente;
 
 	/**
 	 * Constructor sin parametros.
+	 * <p>
+	 * Default constructor.
 	 */
 	public RawDataWritable() {
 		set(new Text(), new Text(), new Text(), new Text(), new Text(), new Text(), new Text(), new Text(), new Text(),
@@ -112,6 +107,7 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 
 	/**
 	 * Constructor con parámetros
+	 * <p>
 	 * 
 	 * @param identifier
 	 * @param dateTaken
@@ -251,9 +247,11 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 
 	/**
 	 * Compara dos RawDataWritable por el campo que los identifica unívocamente, el identifier
+	 * <p>
+	 * Compares two Instances of a RawDataWritable by it's identifier (must be unique).
 	 * 
 	 * @param o
-	 * @return true / false si los Objetos son iguales o no. 
+	 * @return true / false si los Objetos son iguales o no.
 	 */
 	public boolean equals(RawDataWritable o) {
 		return identifier.equals(o.identifier);
