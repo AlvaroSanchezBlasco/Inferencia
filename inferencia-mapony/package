@@ -1,0 +1,23 @@
+mvn eclipse:clean
+
+mvn clean
+
+mvn compile
+
+mvn package
+
+mvn eclipse:eclipse
+
+cp properties/jobs/agrupar/*.properties target
+
+cp properties/jobs/carga/*.properties target
+
+cp properties/jobs/precision/*.properties target
+
+cd target 
+
+ls -l
+
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar
+
+exit

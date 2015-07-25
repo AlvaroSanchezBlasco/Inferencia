@@ -1,0 +1,5 @@
+cd cluster/node2
+
+./bin/elasticsearch
+
+exit

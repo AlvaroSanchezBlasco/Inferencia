@@ -1,0 +1,2 @@
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 3 cargaES.properties
+exit

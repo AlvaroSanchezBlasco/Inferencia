@@ -1,0 +1,11 @@
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn0.properties
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn1.properties
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn2.properties
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn3.properties
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn4.properties
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn5.properties
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn6.properties
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn7.properties
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn8.properties
+hadoop jar inferencia-mapony-1.0.0-ejecucion.jar 1a gn9.properties
+exit

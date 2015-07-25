@@ -1,0 +1,13 @@
+#Crear archivo ejecutable
+chmod +x [nombre_fichero]
+
+./[nombre_fichero]
+
+#Descargar javadocs y sources de las librerías referenciadas
+mvn eclipse:eclipse -DdownloadJavadocs -DdownloadSources
+
+#Buscar y matar un job
+yarn application -list
+
+yarn application -kill $ApplicationId
+
