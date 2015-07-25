@@ -100,7 +100,7 @@ public class MaponyCargaESMap extends Mapper<Text, RawDataArrayWritable, Text, M
 
 						mwr.put(new Text(MaponyJsonCte.fechaCapturaObject), new Text(date));
 
-						mwr.put(new Text(MaponyJsonCte.ciudadObject), new Text(t.getCiudad().toString()));
+//						mwr.put(new Text(MaponyJsonCte.ciudadObject), new Text(t.getCiudad().toString()));
 
 						context.write(new Text(key), new MapWritable(mwr));
 					} catch (Exception e) {
