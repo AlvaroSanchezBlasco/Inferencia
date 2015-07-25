@@ -7,10 +7,6 @@ package mapony.util.constantes;
 public final class MaponyCte {
 
 	/**
-	 * Mensaje generico de ayuda/error al lanzar los job y no obtener los parametros necesarios
-	 */
-	public static final String HELP_MAPONY = "Numero de argumentos no valido \n\n";
-	/**
 	 * [\\d[^\\w^\\-\\s]]+
 	 */
 	public static final String PATTERN_SIMBOLOS = "[\\d[^\\w^\\-\\s]]+";
@@ -188,12 +184,12 @@ public final class MaponyCte {
 	/**
 	 * Nombre del Job que agrupa los datos
 	 */
-	public static final String jobNameMayorPrecision = "Mayor Precision Job";
+	public static final String jobNameMayorPrecision = "Precission Job";
 	
 	/**
 	 * Nombre del Job que carga los datos en ES
 	 */
-	public static final String jobNameMainJob = "Carga en ElasticSearch Job";
+	public static final String jobNameMainJob = "Load Job";
 
 	/**
 	 * Nombre del job que genera ficheros CVS para su visualizacion en CartoDB
@@ -203,6 +199,6 @@ public final class MaponyCte {
 	/**
 	 * No existen datos en la ruta especificada
 	 */
-	public static final String MSG_NO_DATOS = "No existen datos en la ruta especificada";
+	public static final String MSG_NO_DATOS = "No existen datos en la ruta especificada\nNo data in the specified path";
 	
 }

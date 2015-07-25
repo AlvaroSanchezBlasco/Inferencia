@@ -32,7 +32,7 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>util.driver.Driver</mainClass>
+							<mainClass>mapony.util.driver.Driver</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

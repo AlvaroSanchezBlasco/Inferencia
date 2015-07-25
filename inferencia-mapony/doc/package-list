@@ -1,0 +1,15 @@
+mapony.inferencia.a_groupNear.total
+mapony.inferencia.a_groupNear.total.mapper
+mapony.inferencia.b_precision
+mapony.inferencia.b_precision.mapper
+mapony.inferencia.c_carga
+mapony.inferencia.c_carga.mapper
+mapony.inferencia.common.combiner
+mapony.inferencia.common.reducer
+mapony.util.beans
+mapony.util.clases
+mapony.util.constantes
+mapony.util.driver
+mapony.util.patrones
+mapony.util.writables
+mapony.util.writables.array

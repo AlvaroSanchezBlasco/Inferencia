@@ -18,6 +18,8 @@ import mapony.util.writables.array.RawDataArrayWritable;
 /**
  * @author Alvaro Sanchez Blasco
  *         <p>
+ *         ES
+ *         <p>
  *         Mapper del proceso de carga de datos en ElasticSearch.
  *         <p>
  *         Recibimos pares clave (geoHash) valor (RawDataArrayWritable)
@@ -25,6 +27,16 @@ import mapony.util.writables.array.RawDataArrayWritable;
  *         Por cada elemento del RawDataArrayWritable, creamos un MapWritable que contendrá pares de clave valor, con
  *         clave identificador el campo del json que queremos cargar, y valor, el valor asociado, para su procesado por
  *         los Reducer de ElasticSearch.
+ *         <p>
+ *         EN
+ *         <p>
+ *         Mapper to the load process into ElasticSearch.
+ *         <p>
+ *         Recieves key (geohash) value (RawDataArrayWritable)
+ *         <p>
+ *         For each element on the RawDataArrayWritable, we'll create a MapWritable instance that will contain pairs
+ *         key/value. The key will be the field of th JSon that we want to load, and the value, the data of the
+ *         referenced field.
  */
 public class MaponyCargaESMap extends Mapper<Text, RawDataArrayWritable, Text, MapWritable> {
 
@@ -34,8 +46,9 @@ public class MaponyCargaESMap extends Mapper<Text, RawDataArrayWritable, Text, M
 			throws IOException, InterruptedException {
 
 		Writable[] arrValues = values.get();
-		// Descartamos aquellas colecciones de valores que superen más de 30 elementos, de tal forma que evitamos puntos
-		// no significativos.
+		// Descartamos aquellas colecciones de valores que superen más de 30 elementos, de tal forma que evitamos
+		// agrupaciones de datos no significativas.
+		// We don't evaluate data[] with less than 30 elements, so we avoid irrelevant data groupings.
 		if (arrValues.length >= 30) {
 			for (Writable writable : arrValues) {
 				/**
