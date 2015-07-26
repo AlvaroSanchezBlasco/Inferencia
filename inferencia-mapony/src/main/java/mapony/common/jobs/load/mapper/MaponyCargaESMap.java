@@ -48,25 +48,11 @@ public class MaponyCargaESMap extends Mapper<Text, RawDataArrayWritable, Text, M
 		Writable[] arrValues = values.get();
 		// Descartamos aquellas colecciones de valores que superen más de 30 elementos, de tal forma que evitamos
 		// agrupaciones de datos no significativas.
-		// We don't evaluate data[] with less than 30 elements, so we avoid irrelevant data groupings.
-		if (arrValues.length >= 30) {
+		// We don't evaluate data[] with less than 15 elements, so we avoid irrelevant data groupings.
+		if (arrValues.length >= 15) {
+
 			for (Writable writable : arrValues) {
-				/**
-				 * @param identifier[0]
-				 * @param dateTaken[1]
-				 * @param captureDevice[2]
-				 * @param title[3]
-				 * @param description[4]
-				 * @param userTags[5]
-				 * @param machineTags[6]
-				 * @param longitude[7]
-				 * @param latitude[8]
-				 * @param downloadUrl[9]
-				 * @param geoHash[10]
-				 * @param continente[11]
-				 * @param pais[12]
-				 * @param ciudad[13]
-				 */
+				
 				RawDataWritable t = new RawDataWritable((RawDataWritable) writable);
 				Text key = new Text(t.getIdentifier());
 				String date = MaponyUtil.getFechaFromString(t.getDateTaken().toString());
