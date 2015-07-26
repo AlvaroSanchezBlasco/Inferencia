@@ -8,14 +8,6 @@ mvn package
 
 mvn eclipse:eclipse
 
-cp properties/jobs/agrupar/*.properties target
-
-cp properties/jobs/carga/*.properties target
-
-cp properties/jobs/precision/*.properties target
-
-cp config/exec* target
-
 cd target 
 
 ls -l

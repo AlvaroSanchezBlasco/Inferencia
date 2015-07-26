@@ -55,6 +55,5 @@ public class MaponyReducer extends Reducer<Text, RawDataWritable, Text, RawDataA
 	 */
 	public void setup(Context context) {
 		reservoir = Integer.parseInt(context.getConfiguration().get(MaponyPropertiesCte.reservoir));
-		System.err.println(reservoir);
 	}
 }

@@ -1,5 +1,0 @@
-cd cluster/master
-
-./bin/elasticsearch
-
-exit

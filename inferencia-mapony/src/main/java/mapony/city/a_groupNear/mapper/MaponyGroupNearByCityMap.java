@@ -2,6 +2,7 @@ package mapony.city.a_groupNear.mapper;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
@@ -87,7 +88,6 @@ public class MaponyGroupNearByCityMap extends Mapper<LongWritable, Text, Text, R
 					final Text geoHash = MaponyUtil.getGeoHashPorPrecision(longitud, latitud, precisionGeoHash);
 
 					Text ciudad = new Text();
-
 					// Solo emitimos valores que correspondan con las ciudades que queremos procesar
 					if (ciudades.containsKey(geoHash.toString())) {
 						final CustomGeoHashBean temp = ciudades.get(geoHash.toString());

@@ -40,21 +40,15 @@ public class MaponyPrecissionMap extends Mapper<Text, RawDataArrayWritable, Text
 
 				final Text geoHashCalculado = MaponyUtil.getGeoHashPorPrecision(longitud, latitud, precisionGeoHash);
 
-				// Al realizar la carga en ES, como queremos informar de la fecha de captura, si esta no viene, da un
-				// error, y no se cargan datos. Vamos a discriminar también los datos que no tienen el campo fecha de
-				// captura (dateTaken) informado. 
-				String dateTaken = line.getDateTaken().toString();
-				if(MaponyUtil.stringTieneValor(dateTaken)){
-					RawDataWritable rdBean = new RawDataWritable(new Text(line.getIdentifier().toString()),
-							new Text(dateTaken), new Text(line.getCaptureDevice().toString()),
-							new Text(line.getTitle().toString()), new Text(line.getDescription().toString()),
-							new Text(line.getUserTags().toString()), new Text(line.getMachineTags().toString()),
-							new Text(line.getLongitude().toString()), new Text(line.getLatitude().toString()),
-							new Text(line.getDownloadUrl().toString()), new Text(geoHashCalculado.toString()),
-							new Text(line.getCiudad().toString()));
-	
-					context.write(new Text(geoHashCalculado.toString()), new RawDataWritable(rdBean));
-				}
+				RawDataWritable rdBean = new RawDataWritable(new Text(line.getIdentifier().toString()),
+						new Text(line.getDateTaken().toString()), new Text(line.getCaptureDevice().toString()),
+						new Text(line.getTitle().toString()), new Text(line.getDescription().toString()),
+						new Text(line.getUserTags().toString()), new Text(line.getMachineTags().toString()),
+						new Text(line.getLongitude().toString()), new Text(line.getLatitude().toString()),
+						new Text(line.getDownloadUrl().toString()), new Text(geoHashCalculado.toString()),
+						new Text(line.getCiudad().toString()));
+
+				context.write(new Text(geoHashCalculado.toString()), new RawDataWritable(rdBean));
 			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());

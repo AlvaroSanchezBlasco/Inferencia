@@ -2,7 +2,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>proyecto.mapony</groupId>
+	<groupId>mapony.inferencia</groupId>
 	<artifactId>inferencia-mapony</artifactId>
 	<version>1.0.0</version>
 	<packaging>jar</packaging>
@@ -32,7 +32,7 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>util.driver.Driver</mainClass>
+							<mainClass>mapony.util.driver.Driver</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -94,11 +94,6 @@
 			<groupId>ch.hsr</groupId>
 			<artifactId>geohash</artifactId>
 			<version>1.0.13</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.opennlp</groupId>
-			<artifactId>opennlp-tools</artifactId>
-			<version>1.6.0</version>
 		</dependency>
 	</dependencies>
 

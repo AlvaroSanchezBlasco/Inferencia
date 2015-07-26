@@ -39,7 +39,7 @@ public class MaponyCityReducer extends Reducer<Text, RawDataWritable, Text, RawD
 	@Override
 	public void setup(Context context) {
 		mos = new MultipleOutputs<Text, RawDataArrayWritable>(context);
-		reservoir = Integer.parseInt(context.getConfiguration().get(MaponyPropertiesCte.precision));
+		reservoir = Integer.parseInt(context.getConfiguration().get(MaponyPropertiesCte.reservoir));
 	}
 
 	/*
