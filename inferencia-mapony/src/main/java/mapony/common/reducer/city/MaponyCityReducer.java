@@ -69,8 +69,6 @@ public class MaponyCityReducer extends Reducer<Text, RawDataWritable, Text, RawD
 
 		mos.write(new Text(key), new RawDataArrayWritable(Text.class, emit.toArray(new RawDataWritable[emit.size()])),
 				ciudad);
-		// Limpiamos la Lista para liberar memoria
-		emit.clear();
 	}
 
 	/*

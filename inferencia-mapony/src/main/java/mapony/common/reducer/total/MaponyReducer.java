@@ -48,8 +48,6 @@ public class MaponyReducer extends Reducer<Text, RawDataWritable, Text, RawDataA
 		
 		context.write(new Text(key),
 				new RawDataArrayWritable(Text.class, emit.toArray(new RawDataWritable[emit.size()])));
-		//Limpiamos la lista para liberar memoria.
-//		emit.clear();
 	}
 	
 	/* (non-Javadoc)
