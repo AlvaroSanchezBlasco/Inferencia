@@ -3,10 +3,13 @@ package mapony.common.jobs.load;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
 import java.util.Properties;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileStatus;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.MapWritable;
 import org.apache.hadoop.io.Text;
@@ -110,103 +113,31 @@ public class MaponyCargaESJob extends Configured implements Tool {
 		// Output a Elastic Search Output Format
 		job.setOutputFormatClass(EsOutputFormat.class);
 
-//		Path pathOrigen = new Path(getRutaFicheros());
-//
-//		// Recuperamos los ficheros que vamos a procesar, y los anyadimos como datos de entrada
-//		final FileSystem fs = FileSystem.get(new URI("hdfs://quickstart.cloudera:8020/"), config);
-//		try {
-//			// Recuperamos los datos del path origen (data/*.bz2)
-//			FileStatus[] glob = fs.globStatus(pathOrigen);
-//
-//			// Si tenemos datos...
-//			if (null != glob) {
-//				if (glob.length > 0) {
-//					logger.info("Datos de entrada encontrados:\n");
-//					for (FileStatus fileStatus : glob) {
-//						Path pFich = fileStatus.getPath();
-//						logger.info(pFich.toUri().toString());
-						// MultipleInputs
-//						MultipleInputs.addInputPath(job, pFich, SequenceFileInputFormat.class, MaponyCargaESMap.class);
+		Path pathOrigen = new Path(getRutaFicheros());
 
-						
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00000"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00001"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00002"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00003"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00004"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00005"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00006"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00007"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00008"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut0/part-r-00009"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00000"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00001"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00002"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00003"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00004"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00005"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00006"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00007"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00008"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut1/part-r-00009"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00000"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00001"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00002"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00003"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00004"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00005"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00006"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00007"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00008"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut2/part-r-00009"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00000"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00001"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00002"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00003"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00004"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00005"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00006"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00007"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00008"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut3/part-r-00009"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00000"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00001"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00002"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00003"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00004"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00005"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00006"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00007"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00008"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut4/part-r-00009"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00000"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00001"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00002"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00003"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00004"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00005"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00006"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00007"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00008"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						MultipleInputs.addInputPath(job, new Path("agrupaFinOut5/part-r-00009"), SequenceFileInputFormat.class, MaponyCargaESMap.class);
-						
-						
-						
-						
-						
-						
-						
-						//					}
-//				}
-//			} else {
-//				logger.error(MaponyCte.MSG_NO_DATOS + " '" + getRutaFicheros() + "'");
-//				return -1;
-//			}
-//		} catch (IOException e) {
-//			logger.error(MaponyCte.MSG_NO_DATOS + " '" + getRutaFicheros() + "'");
-//			return -1;
-//		}
+		// Recuperamos los ficheros que vamos a procesar, y los anyadimos como datos de entrada
+		final FileSystem fs = FileSystem.get(new URI("hdfs://quickstart.cloudera:8020/"), config);
+		try {
+			// Recuperamos los datos del path origen (data/*.bz2)
+			FileStatus[] glob = fs.globStatus(pathOrigen);
 
+			// Si tenemos datos...
+			if (null != glob) {
+				if (glob.length > 0) {
+					for (FileStatus fileStatus : glob) {
+						Path pFich = fileStatus.getPath();
+						MultipleInputs.addInputPath(job, pFich, SequenceFileInputFormat.class, MaponyCargaESMap.class);
+					}
+				} else {
+					logger.error(MaponyCte.MSG_NO_DATOS + " '" + getRutaFicheros() + "'");
+					return -1;
+				}
+			}
+		} catch (IOException e) {
+			logger.error(MaponyCte.MSG_NO_DATOS + " '" + getRutaFicheros() + "'");
+			return -1;
+		}
+		
 		// Salida del mapper
 		job.setMapOutputKeyClass(Text.class);
 		job.setMapOutputValueClass(MapWritable.class);
