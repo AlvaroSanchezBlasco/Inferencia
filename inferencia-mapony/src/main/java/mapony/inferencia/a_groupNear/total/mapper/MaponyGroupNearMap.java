@@ -106,20 +106,15 @@ public class MaponyGroupNearMap extends Mapper<LongWritable, Text, Text, RawData
 					// Buscamos correspondencia entre el geohash calculado, y las ciudades con las que estamos
 					// trabajando, para completar la informacion del writable
 					Text ciudad = new Text();
-					Text pais = new Text();
-					Text continente = new Text();
 					if (ciudades.containsKey(geoHash.toString())) {
 						final GeoHashBean temp = ciudades.get(geoHash.toString());
 						ciudad = new Text(temp.getName());
-						pais = new Text(temp.getPais());
-						continente = new Text(temp.getContinente());
 					}
 					// Creamos el Writable
 					RawDataWritable rdBean = new RawDataWritable(new Text(dato[0]), new Text(dato[3]),
 							new Text(dato[5]), new Text(dato[6]), new Text(dato[7]), new Text(dato[8]),
 							new Text(dato[9]), new Text(dato[10]), new Text(dato[11]), new Text(dato[14]),
-							new Text(geoHash.toString()), new Text(continente.toString()), new Text(pais.toString()),
-							new Text(ciudad.toString()));
+							new Text(geoHash.toString()), new Text(ciudad.toString()));
 
 					// Emitimos los datos
 					context.write(new Text(rdBean.getGeoHash().toString()), new RawDataWritable(rdBean));

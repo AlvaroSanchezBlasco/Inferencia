@@ -70,6 +70,12 @@ public class GeoHashCiudad {
 		CustomGeoHashBean cghRoma = new CustomGeoHashBean(MaponyCiudadesCte.sRoma, MaponyCiudadesCte.posicionRoma, precision);
 		datosCiudadesSeleccionadas.put(cghRoma.getGeoHash(), cghRoma);
 
+		CustomGeoHashBean cghParis = new CustomGeoHashBean(MaponyCiudadesCte.sParis, MaponyCiudadesCte.posicionParis, precision);
+		datosCiudadesSeleccionadas.put(cghParis.getGeoHash(), cghParis);
+		
+		CustomGeoHashBean cghNuevaYork = new CustomGeoHashBean(MaponyCiudadesCte.sNuevaYork, MaponyCiudadesCte.posicionNuevaYork, precision);
+		datosCiudadesSeleccionadas.put(cghNuevaYork.getGeoHash(), cghNuevaYork);
+
 		return datosCiudadesSeleccionadas;
 	}
  

@@ -1,5 +1,0 @@
-hadoop jar inferencia-mapony-1.0.0-ejecucion.jar groupNear gn8.properties
-hadoop jar inferencia-mapony-1.0.0-ejecucion.jar precission pre08.properties
-hadoop jar inferencia-mapony-1.0.0-ejecucion.jar precission pre18.properties
-hadoop jar inferencia-mapony-1.0.0-ejecucion.jar precission pre28.properties
-exit

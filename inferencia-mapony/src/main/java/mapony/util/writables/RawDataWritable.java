@@ -63,23 +63,12 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 	private Text geoHash;
 
 	/**
-	 * Pais. relacionado con el geohash y el registro.
-	 * <p>
-	 * Country. Related with the geohash and the record processed.
-	 */
-	private Text pais;
-	/**
 	 * Ciudad. relacionado con el geohash y el registro.
 	 * <p>
 	 * City. Related with the geohash and the record processed.
 	 */
 	private Text ciudad;
-	/**
-	 * Continente. Relacionado con el geohash y el registro.
-	 * <p>
-	 * Continent. Related with the geohash and the record processed.
-	 */
-	private Text continente;
+
 
 	/**
 	 * Constructor sin parametros.
@@ -88,7 +77,7 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 	 */
 	public RawDataWritable() {
 		set(new Text(), new Text(), new Text(), new Text(), new Text(), new Text(), new Text(), new Text(), new Text(),
-				new Text(), new Text(), new Text(), new Text(), new Text());
+				new Text(), new Text(), new Text());
 	}
 
 	/*
@@ -120,18 +109,15 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 	 * @param latitude
 	 * @param downloadUrl
 	 * @param geoHash
-	 * @param continente
-	 * @param pais
 	 * @param ciudad
 	 */
 	public RawDataWritable(Text identifier, Text dateTaken, Text captureDevice, Text title, Text description,
 			Text userTags, Text machineTags, Text longitude, Text latitude, Text downloadUrl, Text geoHash,
-			Text continente, Text pais, Text ciudad) {
+			Text ciudad) {
 		set(new Text(identifier.toString()), new Text(dateTaken.toString()), new Text(captureDevice.toString()),
 				new Text(title.toString()), new Text(description.toString()), new Text(userTags.toString()),
 				new Text(machineTags.toString()), new Text(longitude.toString()), new Text(latitude.toString()),
-				new Text(downloadUrl.toString()), new Text(geoHash.toString()), new Text(continente.toString()),
-				new Text(pais.toString()), new Text(ciudad.toString()));
+				new Text(downloadUrl.toString()), new Text(geoHash.toString()), new Text(ciudad.toString()));
 
 	}
 
@@ -149,13 +135,10 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 	 * @param latitude
 	 * @param downloadUrl
 	 * @param geoHash
-	 * @param continente
-	 * @param pais
 	 * @param ciudad
 	 */
 	private void set(Text identifier, Text dateTaken, Text captureDevice, Text title, Text description, Text userTags,
-			Text machineTags, Text longitude, Text latitude, Text downloadUrl, Text geoHash, Text continente, Text pais,
-			Text ciudad) {
+			Text machineTags, Text longitude, Text latitude, Text downloadUrl, Text geoHash, Text ciudad) {
 		this.identifier = new Text(identifier.toString());
 		this.dateTaken = new Text(dateTaken.toString());
 		this.captureDevice = new Text(captureDevice.toString());
@@ -167,8 +150,6 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 		this.latitude = new Text(latitude.toString());
 		this.downloadUrl = new Text(downloadUrl.toString());
 		this.geoHash = new Text(geoHash.toString());
-		this.continente = new Text(continente.toString());
-		this.pais = new Text(pais.toString());
 		this.ciudad = new Text(ciudad.toString());
 	}
 
@@ -187,8 +168,6 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 		this.latitude = new Text(rdw.getLatitude().toString());
 		this.downloadUrl = new Text(rdw.getDownloadUrl().toString());
 		this.geoHash = new Text(rdw.getGeoHash().toString());
-		this.continente = new Text(rdw.getContinente().toString());
-		this.pais = new Text(rdw.getPais().toString());
 		this.ciudad = new Text(rdw.getCiudad().toString());
 	}
 
@@ -209,8 +188,6 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 		latitude.write(out);
 		downloadUrl.write(out);
 		geoHash.write(out);
-		continente.write(out);
-		pais.write(out);
 		ciudad.write(out);
 	}
 
@@ -231,8 +208,6 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 		latitude.readFields(in);
 		downloadUrl.readFields(in);
 		geoHash.readFields(in);
-		continente.readFields(in);
-		pais.readFields(in);
 		ciudad.readFields(in);
 	}
 
@@ -423,21 +398,6 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 	}
 
 	/**
-	 * @return the pais
-	 */
-	public final Text getPais() {
-		return pais;
-	}
-
-	/**
-	 * @param pais
-	 *            the pais to set
-	 */
-	public final void setPais(Text pais) {
-		this.pais = new Text(pais.toString());
-	}
-
-	/**
 	 * @return the ciudad
 	 */
 	public final Text getCiudad() {
@@ -450,20 +410,5 @@ public class RawDataWritable implements WritableComparable<RawDataWritable> {
 	 */
 	public final void setCiudad(Text ciudad) {
 		this.ciudad = new Text(ciudad.toString());
-	}
-
-	/**
-	 * @return the continente
-	 */
-	public final Text getContinente() {
-		return continente;
-	}
-
-	/**
-	 * @param continente
-	 *            the continente to set
-	 */
-	public final void setContinente(Text continente) {
-		this.continente = new Text(continente.toString());
 	}
 }
