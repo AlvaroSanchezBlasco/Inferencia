@@ -61,6 +61,15 @@ public class Utilities {
 			return InferenciaCte.GUION;
 	}
 
+	public static final String replacePlusFromText(Text str) {
+		return replacePlusFromString(str.toString());
+	}
+
+	public static final String replacePlusFromString(String str) {
+		return str.replaceAll(InferenciaCte.ESCAPED_PLUS, InferenciaCte.SPACE);
+	}
+
+	
 	/**
 	 * Eliminamos parabras que se suelen repetir en los campos de descripciones, para que no efecten en las estadisticas de nuestro resultado.
 	 * 

@@ -47,8 +47,7 @@ public class SimpleValidation {
 	}
 
 	public static boolean isTextValueEmpty(Text expected) {
-		String value = expected.toString();
-		return isTrimExpectedEqualsEmpty(value);
+		return isTrimExpectedEqualsEmpty(expected.toString());
 	}
 
 	/**

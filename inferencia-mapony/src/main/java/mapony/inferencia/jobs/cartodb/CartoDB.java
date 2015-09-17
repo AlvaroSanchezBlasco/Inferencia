@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import mapony.inferencia.combiner.CommonCombiner;
 import mapony.inferencia.jobs.InferenciaCustomJob;
 import mapony.inferencia.mapper.cartoDb.CartoDbMap;
-import mapony.inferencia.partitioner.CityPartitioner;
+import mapony.inferencia.partitioner.CartoDbPartitioner;
 import mapony.inferencia.reducer.CartoDbReducer;
 import mapony.inferencia.util.cte.InferenciaCte;
 import mapony.inferencia.util.cte.JobNamesCte;
@@ -126,7 +126,7 @@ public class CartoDB extends InferenciaCustomJob {
 		job.setReducerClass(CartoDbReducer.class);
 		
 		
-		job.setPartitionerClass(CityPartitioner.class);
+		job.setPartitionerClass(CartoDbPartitioner.class);
 
 	}
 }

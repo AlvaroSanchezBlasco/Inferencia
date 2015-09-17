@@ -159,6 +159,11 @@ public final class InferenciaCte {
 	 * ,
 	 */
 	public static final String COMMA = ",";
+	
+	public static final String ESCAPED_PLUS = "\\+";
+	
+	public static final String SPACE = " ";
+	
 
 	public static final int FAIL = -1;
 	

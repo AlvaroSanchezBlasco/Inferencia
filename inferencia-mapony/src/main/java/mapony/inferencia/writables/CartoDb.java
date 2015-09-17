@@ -8,7 +8,9 @@ import java.io.IOException;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 
+import mapony.inferencia.util.Utilities;
 import mapony.inferencia.util.cte.InferenciaCte;
+import mapony.inferencia.util.validation.SimpleValidation;
 
 
 /**
@@ -95,10 +97,16 @@ public class CartoDb implements WritableComparable<CartoDb> {
 
 		sbRetorno.append(getIdentifier().toString()).append(InferenciaCte.COMMA);
 		sbRetorno.append(getDateTaken().toString()).append(InferenciaCte.COMMA);
+		if (SimpleValidation.isTextValueEmpty(getCaptureDevice())) {
+			sbRetorno.append(InferenciaCte.SPACE).append(InferenciaCte.COMMA);
+		} else {
+			sbRetorno.append(Utilities.replacePlusFromText(getCaptureDevice())).append(InferenciaCte.COMMA);
+		}
+
+		sbRetorno.append(getCiudad().toString()).append(InferenciaCte.COMMA);
 		sbRetorno.append(getLongitude().toString()).append(InferenciaCte.COMMA);
-		sbRetorno.append(getCaptureDevice().toString()).append(InferenciaCte.COMMA);
 		sbRetorno.append(getLatitude().toString());
-		
+
 		return sbRetorno.toString();
 	}
 	

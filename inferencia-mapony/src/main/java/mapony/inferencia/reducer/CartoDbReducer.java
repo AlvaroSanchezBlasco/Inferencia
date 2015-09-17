@@ -7,6 +7,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
+import mapony.inferencia.util.cte.JobNamesCte;
 import mapony.inferencia.writables.CartoDb;
 import mapony.inferencia.writables.RawData;
 
@@ -25,7 +26,7 @@ public class CartoDbReducer extends Reducer<Text, RawData, Text, Text> {
 		//Creamos un reservoir de tamanyo definido en las propiedades del job.
 		for (RawData rd : values) {
 			CartoDb cdb = new CartoDb(rd);
-			mos.write(new Text(cdb.getIdentifier()), new Text(cdb.toString()),cdb.getCiudad().toString());
+			mos.write(new Text(cdb.getIdentifier()), new Text(cdb.toString()),JobNamesCte.generateCsv);
 		}
 	}
 
