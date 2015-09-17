@@ -32,7 +32,8 @@
 					</descriptors>
 					<archive>
 						<manifest>
-							<mainClass>mapony.util.driver.Driver</mainClass>
+							<mainClass>mapony.inferencia.util.driver.Driver</mainClass>
+							
 						</manifest>
 					</archive>
 				</configuration>
