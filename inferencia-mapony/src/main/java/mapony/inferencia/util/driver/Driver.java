@@ -27,10 +27,9 @@ public class Driver extends ProgramDriver {
 	/**
 	 * Group By Near Places Job.
 	 * <ul>
-	 * <li>[ES] Primer Job a ejecutar. Agrupa los datos por ciudades.
-	 * <li>[EN] First Job to run. Arrange data by populated cities.
+	 * <li>[ES] Primer Job a ejecutar. Agrupa los datos de las ciudades: Madrid, Londres, Berlin, Roma, Paris, Nueva York.
+	 * <li>[EN] First Job to run. Arrange data by the cities: Madrid, London, Berlin, Rome, Paris, New York.
 	 * </ul>
-	 * TODO Corregir comentario
 	 */
 	private final String DESC_GROUP_NEAR_CITIES = "\tGroup By Near Places Selected Cities Job. \n\t\tPrimer Job a ejecutar. Agrupa los datos de las ciudades: Madrid, Londres, Berlin, Roma, Paris, Nueva York.\n\t\tFirst Job to run. Arrange data by the cities: Madrid, London, Berlin, Rome, Paris, New York.";
 
@@ -46,10 +45,9 @@ public class Driver extends ProgramDriver {
 	/**
 	 * Precission Job.
 	 * <ul>
-	 * <li>[ES] Segundo Job a ejecutar. Agrupa con mayor precision los datos.
-	 * <li>[EN] Second Job to run. Gives more accuracy to arrange data.
+	 * <li>[ES] Segundo Job a ejecutar. Agrupa con mayor precision los de las ciudades: Madrid, Londres, Berlin, Roma, Paris, Nueva York.
+	 * <li>[EN] Second Job to run. Gives more accuracy to arrange data of the cities: Madrid, London, Berlin, Rome, Paris, New York.
 	 * </ul>
-	 * TODO Corregir comentario
 	 */
 	private final String DESC_PRECISSION_CITIES = "\tPrecission Job. \n\t\tSegundo Job a ejecutar. Agrupa con mayor precision los de las ciudades: Madrid, Londres, Berlin, Roma, Paris, Nueva York.\n\t\tSecond Job to run. Gives more accuracy to arrange data of the cities: Madrid, London, Berlin, Rome, Paris, New York.";
 

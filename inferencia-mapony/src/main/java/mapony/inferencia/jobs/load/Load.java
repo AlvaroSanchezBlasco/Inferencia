@@ -32,7 +32,6 @@ import mapony.inferencia.util.exception.InferenciaException;
 
 public class Load extends InferenciaCustomJob {
 
-	//TODO Mirar el metodo run de esta clase, que no es igual al resto. Hay que modificarlo mejor.
 	private String clusterIp;
 	private String clusterPort;
 	private static String indexClusterES;

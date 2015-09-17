@@ -103,7 +103,6 @@ public class CartoDB extends InferenciaCustomJob {
 					for (FileStatus fileStatus : glob) {
 						Path pFich = fileStatus.getPath();
 						// MultipleInputs
-						//TODO Corregir el Map
 						MultipleInputs.addInputPath(job, pFich, SequenceFileInputFormat.class,
 								CartoDbMap.class);
 					}

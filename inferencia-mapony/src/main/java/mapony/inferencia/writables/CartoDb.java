@@ -92,11 +92,11 @@ public class CartoDb implements WritableComparable<CartoDb> {
 
 	public String toString() {
 		StringBuilder sbRetorno = new StringBuilder();
-		// TODO Realizar la concatenacion de los campos correctamente.
-		
+
 		sbRetorno.append(getIdentifier().toString()).append(InferenciaCte.COMMA);
 		sbRetorno.append(getDateTaken().toString()).append(InferenciaCte.COMMA);
 		sbRetorno.append(getLongitude().toString()).append(InferenciaCte.COMMA);
+		sbRetorno.append(getCaptureDevice().toString()).append(InferenciaCte.COMMA);
 		sbRetorno.append(getLatitude().toString());
 		
 		return sbRetorno.toString();
