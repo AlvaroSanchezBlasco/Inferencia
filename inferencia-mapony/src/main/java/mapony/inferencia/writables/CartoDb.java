@@ -175,10 +175,10 @@ public class CartoDb implements WritableComparable<CartoDb> {
 	}
 
 	/**
-	 * Compara dos RawData por el campo que los identifica univocamente, el identifier
+	 * Compara dos CartoDb por el campo que los identifica univocamente, el identifier
 	 * <p>
-	 * Compares two Instances of a RawData by it's identifier (must be unique).
-	 * 
+	 * Compares two Instances of a CartoDb by it's identifier (must be unique).
+	 *
 	 * @param o
 	 * @return true / false si los Objetos son iguales o no.
 	 */

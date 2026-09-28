@@ -18,7 +18,6 @@ import org.elasticsearch.hadoop.mr.EsOutputFormat;
 import org.slf4j.LoggerFactory;
 
 import mapony.inferencia.jobs.InferenciaCustomJob;
-import mapony.inferencia.jobs.groupNear.GroupNear;
 import mapony.inferencia.mapper.load.LoadMap;
 import mapony.inferencia.util.InferenciaMessages;
 import mapony.inferencia.util.cte.ElasticSearchClusterCte;
@@ -49,7 +48,9 @@ public class Load extends InferenciaCustomJob {
 
 	@Override
 	public int run(String[] args) throws Exception {
-		logger = LoggerFactory.getLogger(GroupNear.class);
+		// Bug fix: was logging under GroupNear.class, making it impossible to
+		// distinguish Load job messages from GroupNear messages in the log output.
+		logger = LoggerFactory.getLogger(Load.class);
 
 		loadProperties(args[0]);
 
@@ -128,21 +129,22 @@ public class Load extends InferenciaCustomJob {
 		try {
 			// Recuperamos los ficheros que vamos a procesar, y los anyadimos
 			// como datos de entrada
-			final FileSystem fs = FileSystem.get(new URI(InferenciaCte.hdfsUri), config);
+			// getHdfsUri() reads the URI from properties (hdfs_uri key) with a fallback to
+			// the InferenciaCte constant, so this no longer requires a source-code change per cluster.
+			final FileSystem fs = FileSystem.get(new URI(getHdfsUri()), config);
 
 			// Recuperamos los datos del path origen (data/*.bz2)
 			FileStatus[] glob = fs.globStatus(new Path(getRutaFicheros()));
 
-			// Si tenemos datos...
-			if (null != glob) {
-				if (glob.length > 0) {
-					for (FileStatus fileStatus : glob) {
-						Path pFich = fileStatus.getPath();
-						MultipleInputs.addInputPath(job, pFich, SequenceFileInputFormat.class, LoadMap.class);
-					}
-				} else {
-					return noDataFound();
-				}
+			// Bug fix: the original code handled glob.length==0 (no matching files) but not
+			// null (path does not exist). The inverse of the GroupNear bug. Both null and
+			// empty must abort the job; otherwise Load starts with zero input silently.
+			if (null == glob || glob.length == 0) {
+				return noDataFound();
+			}
+			for (FileStatus fileStatus : glob) {
+				Path pFich = fileStatus.getPath();
+				MultipleInputs.addInputPath(job, pFich, SequenceFileInputFormat.class, LoadMap.class);
 			}
 		} catch (IOException e) {
 			throw new InferenciaException(e, e.getMessage());
@@ -182,6 +184,8 @@ public class Load extends InferenciaCustomJob {
 	}
 
 	public void setClassLogger() {
-		logger = LoggerFactory.getLogger(GroupNear.class);
+		// Bug fix: was logging under GroupNear.class, making it impossible to
+		// distinguish Load job messages from GroupNear messages in the log output.
+		logger = LoggerFactory.getLogger(Load.class);
 	}
 }

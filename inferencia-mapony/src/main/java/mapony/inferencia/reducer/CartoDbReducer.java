@@ -33,4 +33,12 @@ public class CartoDbReducer extends Reducer<Text, RawData, Text, Text> {
 	public void setup(Context context) {
 		mos = new MultipleOutputs<Text, Text>(context);
 	}
+
+	@Override
+	public void cleanup(Context context) throws IOException, InterruptedException {
+		// MultipleOutputs must be explicitly closed in cleanup(). Without this call
+		// the internal buffers may not be flushed and the output files may not be
+		// committed to HDFS, causing silent data loss in the CartoDB CSV output.
+		mos.close();
+	}
 }

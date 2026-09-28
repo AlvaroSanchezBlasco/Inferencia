@@ -21,8 +21,11 @@ public class ArrayOfRawData extends ArrayWritable {
 		super(RawData.class);
 	}
 
+	// Bug fix: the values parameter was silently dropped because super(RawData.class)
+	// does not pass the array. ArrayWritable stores both the component type (used for
+	// deserialization) and the array content, so both must be forwarded together.
 	public ArrayOfRawData(RawData[] values) {
-		super(RawData.class);
+		super(RawData.class, values);
 	}
 
 	public ArrayOfRawData(Class<? extends Writable> valueClass, RawData[] values) {

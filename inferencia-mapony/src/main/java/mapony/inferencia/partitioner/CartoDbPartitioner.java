@@ -17,25 +17,31 @@ import org.apache.hadoop.mapreduce.Partitioner;
  */
 public class CartoDbPartitioner extends Partitioner<Text, RawData> {
 
+	// Bug fix: the original code returned partition 1 for all known cities and
+	// partition 2 for others. With numReducers=2, partition 2 is out of bounds
+	// (valid range: 0..numReducers-1). The fix assigns each of the six cities its
+	// own partition (0-5) for balanced parallel output, and sends unrecognised
+	// records to partition 0. numReducers in the properties file must be >= 6.
 	@Override
 	public int getPartition(Text key, RawData value, int numPartitions) {
-		
-		final String ciudad = value.getCiudad().toString(); 
+
+		final String ciudad = value.getCiudad().toString();
 
 		if (SimpleValidation.isTrimExpectedEqualsTrimActual(ciudad, CitiesCte.sLondres)) {
-			return 1;
+			return 0;
 		} else if (SimpleValidation.isTrimExpectedEqualsTrimActual(ciudad, CitiesCte.sBerlin)) {
 			return 1;
 		} else if (SimpleValidation.isTrimExpectedEqualsTrimActual(ciudad, CitiesCte.sMadrid)) {
-			return 1;
-		} else if (SimpleValidation.isTrimExpectedEqualsTrimActual(ciudad, CitiesCte.sRoma)) {
-			return 1;
-		} else if (SimpleValidation.isTrimExpectedEqualsTrimActual(ciudad, CitiesCte.sParis)) {
-			return 1;
-		} else if (SimpleValidation.isTrimExpectedEqualsTrimActual(ciudad, CitiesCte.sNuevaYork)) {
-			return 1;
-		} else {
 			return 2;
+		} else if (SimpleValidation.isTrimExpectedEqualsTrimActual(ciudad, CitiesCte.sRoma)) {
+			return 3;
+		} else if (SimpleValidation.isTrimExpectedEqualsTrimActual(ciudad, CitiesCte.sParis)) {
+			return 4;
+		} else if (SimpleValidation.isTrimExpectedEqualsTrimActual(ciudad, CitiesCte.sNuevaYork)) {
+			return 5;
+		} else {
+			// Records with no recognised city share partition 0 (London's reducer).
+			return 0;
 		}
 	}
 }

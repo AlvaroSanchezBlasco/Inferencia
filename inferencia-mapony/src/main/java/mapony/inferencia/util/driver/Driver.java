@@ -1,5 +1,6 @@
 package mapony.inferencia.util.driver;
 
+import mapony.inferencia.jobs.cartodb.CartoDB;
 import mapony.inferencia.jobs.groupNear.GroupNear;
 import mapony.inferencia.jobs.groupNear.bycity.GroupNearByCity;
 import mapony.inferencia.jobs.load.Load;
@@ -63,9 +64,26 @@ public class Driver extends ProgramDriver {
 	 * <li>Load Job's description
 	 * <li>Third Job to run. Loads data into an ElasticSearch cluster.
 	 * </ul>
-	 * 
+	 *
 	 */
 	private final String DESC_LOAD = "\tLoad Job. \n\t\tTercer Job a ejecutar. Carga los datos en un cluster de ElasticSearch.\n\t\tThird Job to run. Loads data into a ElasticSearch cluster.";
+
+	/**
+	 * CartoDB CSV Job.
+	 * <ul>
+	 * [ES]
+	 * <li>Genera un fichero CSV con los datos de las ciudades procesadas, listo para cargar en CartoDB.
+	 * <li>Ejecutar opcionalmente tras precission o precissionCities.
+	 * </ul>
+	 * <ul>
+	 * [EN]
+	 * <li>Generates a CSV file with the processed city data, ready for CartoDB ingestion.
+	 * <li>Run optionally after precission or precissionCities.
+	 * </ul>
+	 * Bug fix: CartoDB was a fully implemented job but was never registered here,
+	 * making it unreachable via the Driver command-line interface.
+	 */
+	private final String DESC_CARTODB = "\tCartoDB CSV Job. \n\t\tGenera un CSV listo para carga en CartoDB.\n\t\tGenerates a CSV file ready for CartoDB ingestion.";
 
 	/**
 	 * @throws Throwable
@@ -77,6 +95,7 @@ public class Driver extends ProgramDriver {
 		addClass("precission", Precission.class, DESC_PRECISSION);
 		addClass("precissionCities", PrecissionByCity.class, DESC_PRECISSION_CITIES);
 		addClass("load", Load.class, DESC_LOAD);
+		addClass("cartodb", CartoDB.class, DESC_CARTODB);
 	}
 
 	/**

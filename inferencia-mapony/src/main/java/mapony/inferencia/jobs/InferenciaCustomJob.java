@@ -210,14 +210,25 @@ public abstract class InferenciaCustomJob extends Configured implements Tool {
 	
 	protected int evaluateEndJob(boolean isSuccess) {
 		if(isSuccess){
-			logger.info(InferenciaMessages.jobEndedSuccessful(getJobName()));	
+			logger.info(InferenciaMessages.jobEndedSuccessful(getJobName()));
 			return InferenciaCte.SUCCESS;
 		} else {
 			logger.info(InferenciaMessages.jobEndedNoCompletion(getJobName()));
 			return InferenciaCte.JOB_COMPLETION_FAILED;
 		}
 	}
-	
+
+	/**
+	 * Returns the HDFS NameNode URI. Reads PropertiesCte.hdfs_uri from the loaded
+	 * properties file so different clusters can be targeted without changing source
+	 * code. Falls back to the InferenciaCte constant (Cloudera QuickStart VM) when
+	 * the property is absent, preserving backwards compatibility.
+	 */
+	protected String getHdfsUri() {
+		String uri = properties.getProperty(PropertiesCte.hdfs_uri);
+		return (uri != null && !uri.isEmpty()) ? uri : InferenciaCte.hdfsUri;
+	}
+
 	protected final String getIndiceArchivo() {
 		return indiceArchivo;
 	}

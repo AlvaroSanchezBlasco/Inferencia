@@ -88,23 +88,22 @@ public class Precission extends InferenciaCustomJob {
 	protected int setJobInputData(Configuration config, Job job) throws InferenciaException {
 		try {
 			// Recuperamos los ficheros que vamos a procesar, y los anhadimos como datos de entrada
-			final FileSystem fs = FileSystem.get(new URI(InferenciaCte.hdfsUri), config);
+			// getHdfsUri() reads the URI from properties (hdfs_uri key) with a fallback to the
+			// InferenciaCte constant, so this no longer requires a source-code change per cluster.
+			final FileSystem fs = FileSystem.get(new URI(getHdfsUri()), config);
 
 			// Recuperamos los datos a procesar del path origen (out/part-r-*)
 			FileStatus[] glob = fs.globStatus(new Path(getRutaFicheros()));
 
-			// Si tenemos datos...
-			if (null != glob) {
-				if (glob.length > 0) {
-					for (FileStatus fileStatus : glob) {
-						Path pFich = fileStatus.getPath();
-						// MultipleInputs
-						MultipleInputs.addInputPath(job, pFich, SequenceFileInputFormat.class,
-								PrecissionMap.class);
-					}
-				}
-			} else {
+			// Bug fix: the original code handled null (path not found) but not an empty
+			// array (path exists but no files match the mask). Both cases must abort the
+			// job, otherwise it starts with zero input and silently produces empty output.
+			if (null == glob || glob.length == 0) {
 				return noDataFound();
+			}
+			for (FileStatus fileStatus : glob) {
+				Path pFich = fileStatus.getPath();
+				MultipleInputs.addInputPath(job, pFich, SequenceFileInputFormat.class, PrecissionMap.class);
 			}
 		} catch (IOException e) {
 			throw new InferenciaException(e, e.getMessage());

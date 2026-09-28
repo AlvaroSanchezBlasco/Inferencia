@@ -83,4 +83,13 @@ public class PropertiesCte {
 	 * Extension of the original data
 	 */
 	public static final String ext_archivos = ".bz2";
+
+	/**
+	 * URI del NameNode de HDFS, por ejemplo: hdfs://quickstart.cloudera:8020/
+	 * <p>
+	 * HDFS NameNode URI. Externalised so that deployments to different clusters
+	 * do not require source-code changes. Falls back to InferenciaCte.hdfsUri
+	 * if absent from the properties file.
+	 */
+	public static final String hdfs_uri = "hdfs_uri";
 }

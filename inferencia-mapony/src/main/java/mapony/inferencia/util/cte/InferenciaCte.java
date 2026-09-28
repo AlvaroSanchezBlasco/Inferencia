@@ -179,5 +179,8 @@ public final class InferenciaCte {
 	
 	public static final String NO_MATTER_WHAT_CITY = "indiferente";
 	
+	// Default for the Cloudera QuickStart VM. Prefer setting PropertiesCte.hdfs_uri
+	// in the job's properties file so deployments to other clusters do not require
+	// a source-code change. Used as fallback by InferenciaCustomJob.getHdfsUri().
 	public static final String hdfsUri = "hdfs://quickstart.cloudera:8020/";
 }

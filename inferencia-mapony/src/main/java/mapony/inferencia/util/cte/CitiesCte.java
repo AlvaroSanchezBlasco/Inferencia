@@ -9,67 +9,33 @@ import mapony.inferencia.util.Position;
 public class CitiesCte {
 
 	/**
-	 * London
-	 * <p>
-	 * Lat. 51.50853 / Lon. -0.12574
-	 * <p>
-	 * GeoNameId : 2643743
+	 * London — Lat. 51.50853 / Lon. -0.12574 — GeoNameId: 2643743
 	 */
-//	public static final String posicionLondon = "51.50853,-0.12574";
-
 	public static final Position london = new Position(new Double(51.50853), new Double(-0.12574));
-	
-	/**
-	 * Madrid
-	 * <p>
-	 * Lat. 40.4165 / Lon. -3.70256
-	 * <p>
-	 * GeoNameId : 3117735
-	 */
-//	public static final String posicionMadrid = "40.4165,-3.70256";
 
+	/**
+	 * Madrid — Lat. 40.4165 / Lon. -3.70256 — GeoNameId: 3117735
+	 */
 	public static final Position madrid = new Position(new Double(40.4165), new Double(-3.70256));
 
 	/**
-	 * Berlin
-	 * <p>
-	 * Lat. 52.52437 / Lon. 13.41053
-	 * <p>
-	 * GeoNameId : 2950159
+	 * Berlin — Lat. 52.52437 / Lon. 13.41053 — GeoNameId: 2950159
 	 */
-//	public static final String posicionBerlin = "52.52437,13.41053";
-	
 	public static final Position berlin = new Position(new Double(52.52437), new Double(13.41053));
-	
-	/**
-	 * Roma
-	 * <p>
-	 * Lat. 41.90036 / Lon. 12.49575
-	 * <p>
-	 * GeoNameId : 3169071
-	 */
-//	public static final String posicionRoma = "41.90036,12.49575";
 
+	/**
+	 * Roma — Lat. 41.90036 / Lon. 12.49575 — GeoNameId: 3169071
+	 */
 	public static final Position roma = new Position(new Double(41.90036), new Double(12.49575));
-	
-	/**
-	 * Paris
-	 * <p>
-	 * Lat. 48.85341 / Lon. 2.3488
-	 * <p>
-	 * GeoNameId : 3169071
-	 */
-//	public static final String posicionParis="48.85341,2.3488";
 
+	/**
+	 * Paris — Lat. 48.85341 / Lon. 2.3488 — GeoNameId: 3169071
+	 */
 	public static final Position paris = new Position(new Double(48.85341), new Double(2.3488));
-	
-	/**
-	 * New York
-	 * <p>
-	 * Lat. 40.77427/ Lon. -73.96981
-	 */
-//	public static final String posicionNuevaYork="40.77427,-73.96981";
 
+	/**
+	 * New York — Lat. 40.77427 / Lon. -73.96981
+	 */
 	public static final Position ny = new Position(new Double(40.77427), new Double(-73.96981));
 
 	/**

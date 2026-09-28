@@ -43,8 +43,12 @@ public class CommonReducer extends Reducer<Text, RawData, Text, ArrayOfRawData> 
 			listOfWritablesToEmit.add(new RawData(sampledRawData));
 		}
 		
+		// Bug fix: was passing Text.class as the ArrayWritable component type while the
+		// array holds RawData objects. ArrayWritable uses the stored class to instantiate
+		// elements during readFields(), so Text.class caused a ClassCastException in
+		// CartoDbMap when each element was cast back to RawData.
 		context.write(new Text(key),
-				new ArrayOfRawData(Text.class, listOfWritablesToEmit.toArray(new RawData[listOfWritablesToEmit.size()])));
+				new ArrayOfRawData(RawData.class, listOfWritablesToEmit.toArray(new RawData[listOfWritablesToEmit.size()])));
 	}
 
 	public void setup(Context context) {
