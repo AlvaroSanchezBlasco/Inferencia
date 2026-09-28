@@ -1,25 +1,22 @@
 // Copyright (C) 2015 by Alvaro Sanchez Blasco. All rights reserved.
 package mapony.inferencia.jobs.load;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.MapWritable;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
-import org.apache.hadoop.mapreduce.lib.input.SequenceFileInputFormat;
-import org.elasticsearch.hadoop.mr.EsOutputFormat;
+import org.apache.spark.SparkConf;
+import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaSparkContext;
+import org.elasticsearch.spark.rdd.api.java.JavaEsSpark;
 import org.slf4j.LoggerFactory;
+import scala.Tuple2;
 
 import mapony.inferencia.jobs.InferenciaCustomJob;
-import mapony.inferencia.mapper.load.LoadMap;
 import mapony.inferencia.util.InferenciaMessages;
+import mapony.inferencia.util.Utilities;
 import mapony.inferencia.util.cte.ElasticSearchClusterCte;
 import mapony.inferencia.util.cte.InferenciaCte;
 import mapony.inferencia.util.cte.JobNamesCte;
@@ -27,165 +24,102 @@ import mapony.inferencia.util.cte.JsonCte;
 import mapony.inferencia.util.cte.PropertiesCte;
 import mapony.inferencia.util.elasticsearchclient.ElasticSearchClient;
 import mapony.inferencia.util.exception.InferenciaException;
+import mapony.inferencia.util.validation.ComplexValidation;
+import mapony.inferencia.writables.RawData;
 
-
+/**
+ * @author Alvaro Sanchez Blasco
+ * Migrated to Spark: replaces SequenceFileInputFormat→LoadMap→EsOutputFormat
+ * with sc.objectFile → flatMap → JavaEsSpark.saveToEs().
+ * ElasticSearchClient (index setup) runs in preRun() before the Spark context
+ * is created so it uses the standalone ES transport client, not the Spark connector.
+ */
 public class Load extends InferenciaCustomJob {
 
-	private String clusterIp;
-	private String clusterPort;
-	private static String indexClusterES;
-	private static String typeClusterES;
-	private static String clusterName;
+    private String clusterIp;
+    private String clusterPort;
+    private static String indexClusterES;
+    private static String typeClusterES;
+    private static String clusterName;
 
-	/**
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void main(final String args[]) throws Exception {
-		checkMainClassArgs(args);
-		System.exit(getJobExit(args, new Load()));
-	}
+    @Override
+    public void setClassLogger() {
+        logger = LoggerFactory.getLogger(Load.class);
+    }
 
-	@Override
-	public int run(String[] args) throws Exception {
-		// Bug fix: was logging under GroupNear.class, making it impossible to
-		// distinguish Load job messages from GroupNear messages in the log output.
-		logger = LoggerFactory.getLogger(Load.class);
+    @Override
+    protected void loadProperties(String fileName) throws InferenciaException {
+        super.loadProperties(fileName);
+        indexClusterES = properties.getProperty(ElasticSearchClusterCte.indexName);
+        typeClusterES  = properties.getProperty(ElasticSearchClusterCte.typeName);
+        clusterName    = properties.getProperty(ElasticSearchClusterCte.clusterName);
+    }
 
-		loadProperties(args[0]);
+    @Override
+    protected void init() {
+        setJobName(JobNamesCte.loadInElasticSearch);
+        setRutaFicheros(properties.getProperty(PropertiesCte.datos_iniciales));
+        clusterIp   = properties.getProperty(ElasticSearchClusterCte.ip);
+        clusterPort = properties.getProperty(ElasticSearchClusterCte.port);
+    }
 
-		connectoToElasticSearch();
+    /** Creates the ES index (drops and recreates if it exists) before starting Spark. */
+    @Override
+    protected void preRun() {
+        final String[] params = { indexClusterES, typeClusterES, clusterName };
+        new ElasticSearchClient(params);
+        logger.info(InferenciaMessages.connectedToElasticSearchCluster());
+    }
 
-		init();
+    /** Sets ES connection properties on SparkConf so the ES-Spark connector can find the cluster. */
+    @Override
+    protected JavaSparkContext createSparkContext() {
+        SparkConf conf = new SparkConf()
+            .setAppName(getJobName())
+            .set("es.nodes",       clusterIp + ":" + clusterPort)
+            .set("es.mapping.id",  JsonCte.idObject)
+            .set("es.nodes.wan.only", "true");
+        return new JavaSparkContext(conf);
+    }
 
-		// Creamos el job
-		Job job = Job.getInstance(getConf(), getJobName());
-		job.setJarByClass(Load.class);
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void run() throws Exception {
+        // Read objectFile written by Precission (Tuple2<String geoHash, List<RawData>>)
+        JavaRDD<Map<String, Object>> docs = sc
+            .<Tuple2<String, List<RawData>>>objectFile(getRutaFicheros())
+            .mapToPair(t -> t)
+            // Discard geo-hash cells with fewer than 15 records (not statistically significant)
+            .filter(pair -> pair._2().size() >= 15)
+            .flatMap(pair -> pair._2().iterator())
+            .flatMap(rd -> {
+                try {
+                    if (ComplexValidation.isCustomWritableUseful(rd)) {
+                        String date = Utilities.getElasticSearchDateFieldFromString(rd.getDateTaken());
+                        Map<String, Object> doc = new LinkedHashMap<>();
+                        doc.put(JsonCte.idObject,            rd.getIdentifier());
+                        doc.put(JsonCte.tituloObject,        Utilities.cleanString(rd.getTitle()));
+                        doc.put(JsonCte.descripcionObject,   Utilities.cleanString(rd.getDescription()));
+                        doc.put(JsonCte.userTagsObject,      Utilities.cleanString(rd.getUserTags()));
+                        doc.put(JsonCte.machineTagsObject,   Utilities.cleanString(rd.getMachineTags()));
+                        doc.put(JsonCte.locationObject,      rd.getLatitude() + InferenciaCte.COMMA + rd.getLongitude());
+                        doc.put(JsonCte.fotoObject,          rd.getDownloadUrl());
+                        doc.put(JsonCte.captureDeviceObject, Utilities.cleanString(rd.getCaptureDevice()));
+                        doc.put(JsonCte.fechaCapturaObject,  date);
+                        doc.put(JsonCte.ciudadObject,        rd.getCiudad());
+                        return Collections.singletonList(doc).iterator();
+                    }
+                } catch (Exception e) {
+                    logger.debug(e.getMessage());
+                }
+                return Collections.emptyIterator();
+            });
 
-		Configuration config = job.getConfiguration();
-		setJobConfig(config);
+        JavaEsSpark.saveToEs(docs, indexClusterES + "/" + typeClusterES);
+    }
 
-		setOutPuts(config, job);
-
-		if (setJobInputData(config, job) == InferenciaCte.FAIL) {
-			return evaluateEndJob(false);
-		}
-
-		return evaluateEndJob(job.waitForCompletion(true));
-	}
-
-	private void setJobConfig(Configuration config) {
-		config.setBoolean("mapred.map.tasks.speculative.execution", false);
-		config.set("es.mapping.id", JsonCte.idObject);
-
-		config.set("key.value.separator.in.input.line", " ");
-		config.set("es.nodes", getClusterIp() + ":" + getClusterPort());
-		config.set("es.resource", indexClusterES + "/" + typeClusterES);
-	}
-
-	@Override
-	protected void loadProperties(String fileName) throws InferenciaException {
-		super.loadProperties(fileName);
-		indexClusterES = properties.getProperty(ElasticSearchClusterCte.indexName);
-		typeClusterES = properties.getProperty(ElasticSearchClusterCte.typeName);
-		clusterName = properties.getProperty(ElasticSearchClusterCte.clusterName);
-	}
-
-	private void connectoToElasticSearch() {
-		final String[] clusterElasticSearchParams = { indexClusterES, typeClusterES, clusterName };
-		new ElasticSearchClient(clusterElasticSearchParams);
-		logger.info(InferenciaMessages.connectedToElasticSearchCluster());
-	}
-
-	@Override
-	protected void init() {
-		setJobName(JobNamesCte.loadInElasticSearch);
-		setRutaFicheros(properties.getProperty(PropertiesCte.datos_iniciales));
-		setClusterIp(properties.getProperty(ElasticSearchClusterCte.ip));
-		setClusterPort(properties.getProperty(ElasticSearchClusterCte.port));
-	}
-
-	protected void init(Configuration config) {
-	}
-
-	@Override
-	protected void setJobOutputFormat(Job job) {
-		// Output a Elastic Search Output Format
-		job.setOutputFormatClass(EsOutputFormat.class);
-	}
-
-	@Override
-	protected void setMappperOutput(Job job) {
-		// Salida del mapper
-		job.setMapOutputKeyClass(Text.class);
-		job.setMapOutputValueClass(MapWritable.class);
-	}
-
-	protected void setReducerOutput(Job job) {
-	}
-
-	@Override
-	protected int setJobInputData(Configuration config, Job job) throws InferenciaException {
-		try {
-			// Recuperamos los ficheros que vamos a procesar, y los anyadimos
-			// como datos de entrada
-			// getHdfsUri() reads the URI from properties (hdfs_uri key) with a fallback to
-			// the InferenciaCte constant, so this no longer requires a source-code change per cluster.
-			final FileSystem fs = FileSystem.get(new URI(getHdfsUri()), config);
-
-			// Recuperamos los datos del path origen (data/*.bz2)
-			FileStatus[] glob = fs.globStatus(new Path(getRutaFicheros()));
-
-			// Bug fix: the original code handled glob.length==0 (no matching files) but not
-			// null (path does not exist). The inverse of the GroupNear bug. Both null and
-			// empty must abort the job; otherwise Load starts with zero input silently.
-			if (null == glob || glob.length == 0) {
-				return noDataFound();
-			}
-			for (FileStatus fileStatus : glob) {
-				Path pFich = fileStatus.getPath();
-				MultipleInputs.addInputPath(job, pFich, SequenceFileInputFormat.class, LoadMap.class);
-			}
-		} catch (IOException e) {
-			throw new InferenciaException(e, e.getMessage());
-		} catch (URISyntaxException e) {
-			throw new InferenciaException(e, e.getMessage());
-		}
-		return InferenciaCte.SUCCESS;
-	}
-
-	protected void setJobClasses(Job job) {
-	}
-
-	private final String getClusterIp() {
-		return clusterIp;
-	}
-
-	private final void setClusterIp(String clusterIp) {
-		this.clusterIp = clusterIp;
-	}
-
-	private final String getClusterPort() {
-		return clusterPort;
-	}
-
-	private final void setClusterPort(String clusterPort) {
-		this.clusterPort = clusterPort;
-	}
-
-	public Job createJobAndSetJarByClass(Configuration config) throws InferenciaException {
-		try {
-			final Job job = Job.getInstance(config, getJobName());
-			job.setJarByClass(Load.class);
-			return job;
-		} catch (IOException e) {
-			throw new InferenciaException(e, e.getMessage());
-		}
-	}
-
-	public void setClassLogger() {
-		// Bug fix: was logging under GroupNear.class, making it impossible to
-		// distinguish Load job messages from GroupNear messages in the log output.
-		logger = LoggerFactory.getLogger(Load.class);
-	}
+    public static void main(String[] args) throws Exception {
+        checkMainClassArgs(args);
+        System.exit(new Load().execute(args));
+    }
 }

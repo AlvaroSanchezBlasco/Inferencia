@@ -1,83 +1,35 @@
 // Copyright (C) 2015 by Alvaro Sanchez Blasco. All rights reserved.
 package mapony.inferencia.jobs.precission.bycity;
 
-import java.io.IOException;
+import org.slf4j.LoggerFactory;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.util.ToolRunner;
-
-import mapony.inferencia.combiner.CommonCombiner;
 import mapony.inferencia.jobs.precission.Precission;
-import mapony.inferencia.partitioner.CityPartitioner;
-import mapony.inferencia.reducer.MultipleOutputsReducer;
 import mapony.inferencia.util.cte.JobNamesCte;
-import mapony.inferencia.util.cte.PropertiesCte;
-import mapony.inferencia.util.exception.InferenciaException;
 
-
+/**
+ * @author Alvaro Sanchez Blasco
+ * Migrated to Spark: extends Precission with jobName override.
+ * In the Hadoop version this variant routed output per city via
+ * MultipleOutputsReducer + CityPartitioner; in Spark both variants
+ * produce the same objectFile format and city filtering is done
+ * downstream in the CartoDB job.
+ */
 public class PrecissionByCity extends Precission {
 
-	public static void main(final String args[]) throws Exception {
-		checkMainClassArgs(args);
-		System.exit(ToolRunner.run(new PrecissionByCity(), args));
-	}
-	
-	@Override
-	public Job createJobAndSetJarByClass(Configuration config) throws InferenciaException {
-		try {
-			final Job job = Job.getInstance(config, getJobName());
-			job.setJarByClass(PrecissionByCity.class);
-			return job;
-		} catch (IOException e) {
-			throw new InferenciaException(e, e.getMessage());
-		}
-	}
+    @Override
+    public void setClassLogger() {
+        logger = LoggerFactory.getLogger(PrecissionByCity.class);
+    }
 
-	@Override
-	protected void init(Configuration config) {
-		setJobName(JobNamesCte.precissionByCity);
+    @Override
+    protected void init() {
+        super.init();
+        // Override only the job name; all other settings from Precission.init() apply.
+        setJobName(JobNamesCte.precissionByCity);
+    }
 
-		setIndice_archivos(properties.getProperty(PropertiesCte.indice_archivo));
-		setPatronFicheros(properties.getProperty(PropertiesCte.patron_ficheros));
-
-		// Completamos la ruta con la mascara de ficheros a buscar
-		setRutaFicheros(properties.getProperty(PropertiesCte.datos_iniciales) + getIndice_archivos() + getPatronFicheros());
-
-		// Anyadimos el indice a la salida del job para diferenciar los datos de cada job con el archivo original
-		setRutaSalidaFicheros(properties.getProperty(PropertiesCte.salida_datos_job) + getIndice_archivos());
-		setNumReducers(Integer.parseInt(properties.getProperty(PropertiesCte.reducers)));
-
-		config.set(PropertiesCte.precision, properties.getProperty(PropertiesCte.precision));
-		config.set(PropertiesCte.reservoirSize, properties.getProperty(PropertiesCte.reservoirSize));
-	}
-
-	protected void init() {
-	}
-
-	@Override
-	protected void setJobOutputFormat(Job job) {
-		super.setJobOutputFormat(job);
-	}
-
-	@Override
-	protected void setMappperOutput(Job job) {
-		super.setMappperOutput(job);
-	}
-
-	@Override
-	protected void setReducerOutput(Job job) {
-		super.setReducerOutput(job);
-	}
-
-	@Override
-	protected void setJobClasses(Job job) {
-		// Combiner de nuestro Job
-		job.setCombinerClass(CommonCombiner.class);
-
-		// Reducer de nuestro Job
-		job.setReducerClass(MultipleOutputsReducer.class);
-		
-		job.setPartitionerClass(CityPartitioner.class);
-	}
+    public static void main(String[] args) throws Exception {
+        checkMainClassArgs(args);
+        System.exit(new PrecissionByCity().execute(args));
+    }
 }

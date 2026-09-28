@@ -1,284 +1,122 @@
 // Copyright (C) 2015 by Alvaro Sanchez Blasco. All rights reserved.
 package mapony.inferencia.writables;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.WritableComparable;
+import java.io.Serializable;
 
 import mapony.inferencia.util.Utilities;
 import mapony.inferencia.util.cte.InferenciaCte;
 import mapony.inferencia.util.validation.SimpleValidation;
 
-
 /**
  * @author Alvaro Sanchez Blasco
- *         <ul>
- *         <li>[ES] CustomWritable para procesar los datos del dataset de Flickr.
- *         <li>[EN] CustomWritable to process the data of the Flick's dataset.
- *         </ul>
+ * Migrated from WritableComparable to Serializable for Apache Spark compatibility.
+ * Text fields replaced with String — see RawData for the same rationale.
  */
-public class CartoDb implements WritableComparable<CartoDb> {
+public class CartoDb implements Comparable<CartoDb>, Serializable {
 
-	/**
-	 * Photo/Video Identifier
-	 */
-	private Text identifier;
-	/**
-	 * Date Taken
-	 */
-	private Text dateTaken;
-	/**
-	 * Capture Device
-	 */
-	private Text captureDevice;
-	/**
-	 * Title
-	 */
-	private Text title;
-	/**
-	 * Description
-	 */
-	private Text description;
-	/**
-	 * User Tags (Comma-Separated)
-	 */
-	private Text userTags;
-	/**
-	 * Machine Tags (Comma-Separated)
-	 */
-	private Text machineTags;
-	/**
-	 * Longitude
-	 */
-	private Text longitude;
-	/**
-	 * Latitude
-	 */
-	private Text latitude;
-	/**
-	 * Photo/Video Download Url
-	 */
-	private Text downloadUrl;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 * GeoHas calculado
-	 */
-	private Text geoHash;
+    private String identifier;
+    private String dateTaken;
+    private String captureDevice;
+    private String title;
+    private String description;
+    private String userTags;
+    private String machineTags;
+    private String longitude;
+    private String latitude;
+    private String downloadUrl;
+    private String geoHash;
+    private String ciudad;
 
-	/**
-	 * Ciudad. relacionado con el geohash y el registro.
-	 * <p>
-	 * City. Related with the geohash and the record processed.
-	 */
-	private Text ciudad;
+    public CartoDb() { set(); }
 
-	public CartoDb() {
-		set();
-	}
+    public CartoDb(final RawData rd) { set(rd); }
 
-	public CartoDb(final RawData rd) {
-		set(rd);
-	}
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
+        result = prime * result + ((longitude == null) ? 0 : longitude.hashCode());
+        result = prime * result + ((latitude == null) ? 0 : latitude.hashCode());
+        return result;
+    }
 
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
-		result = prime * result + ((longitude == null) ? 0 : longitude.hashCode());
-		result = prime * result + ((latitude == null) ? 0 : latitude.hashCode());
-		return result;
-	}
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(identifier).append(InferenciaCte.COMMA);
+        sb.append(dateTaken).append(InferenciaCte.COMMA);
+        // replacePlusFromString replaces the '+' URL encoding that Flickr uses for spaces
+        if (SimpleValidation.isTrimExpectedEqualsEmpty(captureDevice)) {
+            sb.append(InferenciaCte.SPACE).append(InferenciaCte.COMMA);
+        } else {
+            sb.append(Utilities.replacePlusFromString(captureDevice)).append(InferenciaCte.COMMA);
+        }
+        sb.append(ciudad).append(InferenciaCte.COMMA);
+        sb.append(longitude).append(InferenciaCte.COMMA);
+        sb.append(latitude);
+        return sb.toString();
+    }
 
-	public String toString() {
-		StringBuilder sbRetorno = new StringBuilder();
+    private void set() {
+        this.identifier = InferenciaCte.EMPTY_STRING;
+        this.dateTaken = InferenciaCte.EMPTY_STRING;
+        this.captureDevice = InferenciaCte.EMPTY_STRING;
+        this.title = InferenciaCte.EMPTY_STRING;
+        this.description = InferenciaCte.EMPTY_STRING;
+        this.userTags = InferenciaCte.EMPTY_STRING;
+        this.machineTags = InferenciaCte.EMPTY_STRING;
+        this.longitude = InferenciaCte.EMPTY_STRING;
+        this.latitude = InferenciaCte.EMPTY_STRING;
+        this.downloadUrl = InferenciaCte.EMPTY_STRING;
+        this.geoHash = InferenciaCte.EMPTY_STRING;
+        this.ciudad = InferenciaCte.EMPTY_STRING;
+    }
 
-		sbRetorno.append(getIdentifier().toString()).append(InferenciaCte.COMMA);
-		sbRetorno.append(getDateTaken().toString()).append(InferenciaCte.COMMA);
-		if (SimpleValidation.isTextValueEmpty(getCaptureDevice())) {
-			sbRetorno.append(InferenciaCte.SPACE).append(InferenciaCte.COMMA);
-		} else {
-			sbRetorno.append(Utilities.replacePlusFromText(getCaptureDevice())).append(InferenciaCte.COMMA);
-		}
+    private void set(final RawData rd) {
+        this.identifier = rd.getIdentifier();
+        this.dateTaken = rd.getDateTaken();
+        this.captureDevice = rd.getCaptureDevice();
+        this.title = rd.getTitle();
+        this.description = rd.getDescription();
+        this.userTags = rd.getUserTags();
+        this.machineTags = rd.getMachineTags();
+        this.longitude = rd.getLongitude();
+        this.latitude = rd.getLatitude();
+        this.downloadUrl = rd.getDownloadUrl();
+        this.geoHash = rd.getGeoHash();
+        this.ciudad = rd.getCiudad();
+    }
 
-		sbRetorno.append(getCiudad().toString()).append(InferenciaCte.COMMA);
-		sbRetorno.append(getLongitude().toString()).append(InferenciaCte.COMMA);
-		sbRetorno.append(getLatitude().toString());
+    public int compareTo(CartoDb o) { return identifier.compareTo(o.identifier); }
 
-		return sbRetorno.toString();
-	}
-	
-	private void set() {
-		this.identifier = new Text();
-		this.dateTaken = new Text();
-		this.captureDevice = new Text();
-		this.title = new Text();
-		this.description = new Text();
-		this.userTags = new Text();
-		this.machineTags = new Text();
-		this.longitude = new Text();
-		this.latitude = new Text();
-		this.downloadUrl = new Text();
-		this.geoHash = new Text();
-		this.ciudad = new Text();
-	}
+    public boolean equals(Object o) {
+        if (!(o instanceof CartoDb)) return false;
+        return identifier.equals(((CartoDb) o).identifier);
+    }
 
-	private void set(final RawData rd) {
-		this.identifier = new Text(rd.getIdentifier().toString());
-		this.dateTaken = new Text(rd.getDateTaken().toString());
-		this.captureDevice = new Text(rd.getCaptureDevice().toString());
-		this.title = new Text(rd.getTitle().toString());
-		this.description = new Text(rd.getDescription().toString());
-		this.userTags = new Text(rd.getUserTags().toString());
-		this.machineTags = new Text(rd.getMachineTags().toString());
-		this.longitude = new Text(rd.getLongitude().toString());
-		this.latitude = new Text(rd.getLatitude().toString());
-		this.downloadUrl = new Text(rd.getDownloadUrl().toString());
-		this.geoHash = new Text(rd.getGeoHash());
-		this.ciudad = new Text(rd.getCiudad().toString());
-	}
-
-	public void write(DataOutput out) throws IOException {
-		identifier.write(out);
-		dateTaken.write(out);
-		captureDevice.write(out);
-		title.write(out);
-		description.write(out);
-		userTags.write(out);
-		machineTags.write(out);
-		longitude.write(out);
-		latitude.write(out);
-		downloadUrl.write(out);
-		geoHash.write(out);
-		ciudad.write(out);
-	}
-
-	public void readFields(DataInput in) throws IOException {
-		identifier.readFields(in);
-		dateTaken.readFields(in);
-		captureDevice.readFields(in);
-		title.readFields(in);
-		description.readFields(in);
-		userTags.readFields(in);
-		machineTags.readFields(in);
-		longitude.readFields(in);
-		latitude.readFields(in);
-		downloadUrl.readFields(in);
-		geoHash.readFields(in);
-		ciudad.readFields(in);
-	}
-
-	public int compareTo(CartoDb o) {
-		return identifier.compareTo(o.getIdentifier());
-	}
-
-	/**
-	 * Compara dos CartoDb por el campo que los identifica univocamente, el identifier
-	 * <p>
-	 * Compares two Instances of a CartoDb by it's identifier (must be unique).
-	 *
-	 * @param o
-	 * @return true / false si los Objetos son iguales o no.
-	 */
-	public boolean equals(CartoDb o) {
-		return identifier.equals(o.getIdentifier());
-	}
-
-	public final Text getIdentifier() {
-		return identifier;
-	}
-
-	public final void setIdentifier(Text identifier) {
-		this.identifier = identifier;
-	}
-
-	public final Text getDateTaken() {
-		return dateTaken;
-	}
-
-	public final void setDateTaken(Text dateTaken) {
-		this.dateTaken = dateTaken;
-	}
-
-	public final Text getCaptureDevice() {
-		return captureDevice;
-	}
-
-	public final void setCaptureDevice(Text captureDevice) {
-		this.captureDevice = captureDevice;
-	}
-
-	public final Text getTitle() {
-		return title;
-	}
-
-	public final void setTitle(Text title) {
-		this.title = title;
-	}
-
-	public final Text getDescription() {
-		return description;
-	}
-
-	public final void setDescription(Text description) {
-		this.description = description;
-	}
-
-	public final Text getUserTags() {
-		return userTags;
-	}
-
-	public final void setUserTags(Text userTags) {
-		this.userTags = userTags;
-	}
-
-	public final Text getMachineTags() {
-		return machineTags;
-	}
-
-	public final void setMachineTags(Text machineTags) {
-		this.machineTags = machineTags;
-	}
-
-	public final Text getLongitude() {
-		return longitude;
-	}
-
-	public final void setLongitude(Text longitude) {
-		this.longitude = longitude;
-	}
-
-	public final Text getLatitude() {
-		return latitude;
-	}
-
-	public final void setLatitude(Text latitude) {
-		this.latitude = latitude;
-	}
-
-	public final Text getDownloadUrl() {
-		return downloadUrl;
-	}
-
-	public final void setDownloadUrl(Text downloadUrl) {
-		this.downloadUrl = downloadUrl;
-	}
-
-	public final Text getGeoHash() {
-		return geoHash;
-	}
-
-	public final void setGeoHash(Text geoHash) {
-		this.geoHash = geoHash;
-	}
-
-	public final Text getCiudad() {
-		return ciudad;
-	}
-
-	public final void setCiudad(Text ciudad) {
-		this.ciudad = ciudad;
-	}
+    public final String getIdentifier() { return identifier; }
+    public final void setIdentifier(String identifier) { this.identifier = identifier; }
+    public final String getDateTaken() { return dateTaken; }
+    public final void setDateTaken(String dateTaken) { this.dateTaken = dateTaken; }
+    public final String getCaptureDevice() { return captureDevice; }
+    public final void setCaptureDevice(String captureDevice) { this.captureDevice = captureDevice; }
+    public final String getTitle() { return title; }
+    public final void setTitle(String title) { this.title = title; }
+    public final String getDescription() { return description; }
+    public final void setDescription(String description) { this.description = description; }
+    public final String getUserTags() { return userTags; }
+    public final void setUserTags(String userTags) { this.userTags = userTags; }
+    public final String getMachineTags() { return machineTags; }
+    public final void setMachineTags(String machineTags) { this.machineTags = machineTags; }
+    public final String getLongitude() { return longitude; }
+    public final void setLongitude(String longitude) { this.longitude = longitude; }
+    public final String getLatitude() { return latitude; }
+    public final void setLatitude(String latitude) { this.latitude = latitude; }
+    public final String getDownloadUrl() { return downloadUrl; }
+    public final void setDownloadUrl(String downloadUrl) { this.downloadUrl = downloadUrl; }
+    public final String getGeoHash() { return geoHash; }
+    public final void setGeoHash(String geoHash) { this.geoHash = geoHash; }
+    public final String getCiudad() { return ciudad; }
+    public final void setCiudad(String ciudad) { this.ciudad = ciudad; }
 }

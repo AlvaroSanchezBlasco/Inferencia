@@ -76,19 +76,21 @@ public class ComplexValidation {
 		}
 	}
 
+	// Migrated: RawData.getLongitude/getLatitude/getDateTaken now return String (not Text),
+	// so the Text-based isTextNotNullOrNotEmpty calls are replaced with the String equivalent.
 	public static boolean isCustomWritableUseful(RawData dato) throws InferenciaException {
 		// Longitud
-		if (isTextNotNullOrNotEmpty(dato.getLongitude())) {
+		if (isTrimExpectedNotNullAndNotEmpty(dato.getLongitude())) {
 			throw new InferenciaException(new Exception(LONGITUDE_IS_NULL_OR_EMPTY), LONGITUDE_IS_NULL_OR_EMPTY);
 		}
 
 		// Latitud
-		if (isTextNotNullOrNotEmpty(dato.getLatitude())) {
+		if (isTrimExpectedNotNullAndNotEmpty(dato.getLatitude())) {
 			throw new InferenciaException(new Exception(LATITUDE_IS_NULL_OR_EMPTY), LATITUDE_IS_NULL_OR_EMPTY);
 		}
 
 		// Campo fecha de captura
-		if (isTextNotNullOrNotEmpty(dato.getDateTaken())) {
+		if (isTrimExpectedNotNullAndNotEmpty(dato.getDateTaken())) {
 			throw new InferenciaException(new Exception(DATE_TAKEN_IS_NULL_OR_EMPTY), DATE_TAKEN_IS_NULL_OR_EMPTY);
 		}
 
